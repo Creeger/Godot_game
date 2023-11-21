@@ -9,3 +9,13 @@ kommer fra project-settings -> input-map.
 
 Videre dokumentasjon kan du finne ved å f.eks. ctrl-klikke på funksjonene i
 Player.gd scriptet.
+
+# Kontroller
+
+Spiller 1:
+    w: opp
+    s: ned
+
+Spiller 2:
+    pil opp: opp
+    pil ned: ned
