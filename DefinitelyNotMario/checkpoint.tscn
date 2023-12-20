@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bylsnksx8uyxe"]
+
+[ext_resource type="Script" path="res://Checkpoint.gd" id="1_g27gi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6s0nr"]
+
+[node name="Checkpoint" type="Area2D" groups=["Checkpoint"]]
+script = ExtResource("1_g27gi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_6s0nr")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 1)
+polygon = PackedVector2Array(-1, 10, -1, -10, 10, -6, 0, -3, 0, 10)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
