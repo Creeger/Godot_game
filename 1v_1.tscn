@@ -1,15 +1,27 @@
-[gd_scene load_steps=7 format=3 uid="uid://db15rgop0uh4l"]
+[gd_scene load_steps=13 format=3 uid="uid://db15rgop0uh4l"]
 
 [ext_resource type="Script" path="res://Player.gd" id="1_3nkt2"]
 [ext_resource type="Texture2D" uid="uid://uocmqcqrd7vd" path="res://Paddle.png" id="2_kyevv"]
 [ext_resource type="Script" path="res://Ball.gd" id="3_oe0wx"]
 [ext_resource type="Texture2D" uid="uid://bvu6dm4g7oxku" path="res://Ball.png" id="4_2hak6"]
+[ext_resource type="Script" path="res://GoalKeeper.gd" id="5_uktug"]
+[ext_resource type="Script" path="res://player1score.gd" id="6_t0mwl"]
+[ext_resource type="Script" path="res://player2score.gd" id="7_yoh4g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_menh0"]
 size = Vector2(42, 204)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p6043"]
 radius = 20.025
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jkmv8"]
+size = Vector2(1149.25, 188.625)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4l466"]
+size = Vector2(322.5, 1020)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arofp"]
+size = Vector2(374.5, 1018)
 
 [node name="1v1" type="Node2D"]
 
@@ -26,7 +38,7 @@ shape = SubResource("RectangleShape2D_menh0")
 texture = ExtResource("2_kyevv")
 
 [node name="Player2" type="CharacterBody2D" parent="."]
-position = Vector2(1111, 342)
+position = Vector2(1111, 343)
 script = ExtResource("1_3nkt2")
 move_up_input = "player_2_up"
 move_down_input = "player_2_down"
@@ -35,6 +47,7 @@ move_down_input = "player_2_down"
 shape = SubResource("RectangleShape2D_menh0")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player2"]
+position = Vector2(0, 1)
 texture = ExtResource("2_kyevv")
 
 [node name="Ball" type="CharacterBody2D" parent="."]
@@ -46,3 +59,62 @@ shape = SubResource("CircleShape2D_p6043")
 
 [node name="Sprite2D" type="Sprite2D" parent="Ball"]
 texture = ExtResource("4_2hak6")
+
+[node name="Walls" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls"]
+position = Vector2(576, 743)
+shape = SubResource("RectangleShape2D_jkmv8")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Walls"]
+position = Vector2(574, -92.6875)
+shape = SubResource("RectangleShape2D_jkmv8")
+
+[node name="Player1Goal" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player1Goal"]
+position = Vector2(-165.75, 325)
+shape = SubResource("RectangleShape2D_4l466")
+
+[node name="Player2Goal" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player2Goal"]
+position = Vector2(1341, 326)
+shape = SubResource("RectangleShape2D_arofp")
+
+[node name="GoalKeeper" type="Node" parent="."]
+script = ExtResource("5_uktug")
+
+[node name="SubViewport" type="CanvasLayer" parent="."]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="SubViewport/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "asdasd"
+script = ExtResource("6_t0mwl")
+
+[node name="Label2" type="Label" parent="SubViewport/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "asdasds"
+horizontal_alignment = 2
+script = ExtResource("7_yoh4g")
+
+[connection signal="body_entered" from="Player1Goal" to="GoalKeeper" method="_on_player_1_goal_body_entered"]
+[connection signal="body_entered" from="Player2Goal" to="GoalKeeper" method="_on_player_2_goal_body_entered"]
+[connection signal="reset" from="GoalKeeper" to="Player1" method="_on_goal_keeper_reset"]
+[connection signal="reset" from="GoalKeeper" to="Player2" method="_on_goal_keeper_reset"]
+[connection signal="reset" from="GoalKeeper" to="Ball" method="_on_goal_keeper_reset"]
+[connection signal="update_state" from="GoalKeeper" to="SubViewport/HBoxContainer/Label" method="_on_goal_keeper_update_state"]
+[connection signal="update_state" from="GoalKeeper" to="SubViewport/HBoxContainer/Label2" method="_on_goal_keeper_update_state"]
