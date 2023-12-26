@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://rx762t2nt76r"]
+[gd_scene load_steps=20 format=3 uid="uid://rx762t2nt76r"]
 
 [ext_resource type="Texture2D" uid="uid://dvgcm1c35kowq" path="res://generic_platformer_tiles.png" id="1_5fk8r"]
 [ext_resource type="Script" path="res://Player.gd" id="2_5llga"]
@@ -8,7 +8,10 @@
 [ext_resource type="Script" path="res://Enemy.gd" id="6_77h3d"]
 [ext_resource type="Script" path="res://EnemyKillPlayer.gd" id="7_ajosd"]
 [ext_resource type="PackedScene" uid="uid://bylsnksx8uyxe" path="res://checkpoint.tscn" id="8_w3my4"]
-[ext_resource type="Script" path="res://Respawn.gd" id="9_nbs70"]
+[ext_resource type="Script" path="res://RespawnButton.gd" id="9_nbs70"]
+[ext_resource type="Script" path="res://FinishFlag.gd" id="10_g3363"]
+[ext_resource type="PackedScene" uid="uid://mxspgmphsu6w" path="res://play_again_button.tscn" id="10_qfe0g"]
+[ext_resource type="Script" path="res://play_again_button.gd" id="11_dpmff"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_57jcs"]
 tile_data = PackedInt32Array(0, 1441792, 1, 1, 1507328, 1, 65537, 1507328, 2, 131073, 1507328, 3, 2, 1572864, 1, 65538, 1572864, 2, 131074, 1572864, 3, 196610, 1507328, 3, 3, 1572864, 1, 65539, 1572864, 2, 131075, 1572864, 2, 196611, 1572864, 3, 4, 1572864, 1, 65540, 1572864, 2, 131076, 1572864, 2, 196612, 1638400, 3, 5, 1572864, 1, 65541, 1572864, 2, 131077, 1638400, 3, 196613, 1703936, 3, 6, 1703936, 1, 65542, 1703936, 2, 131078, 1703936, 3, 7, 1769472, 1)
@@ -216,6 +219,9 @@ size = Vector2(7, 2)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h08dg"]
 size = Vector2(17, 17)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0tkdt"]
+size = Vector2(7, 115)
+
 [node name="Main" type="Node2D"]
 texture_filter = 1
 
@@ -282,13 +288,53 @@ position = Vector2(-142, 23)
 
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Respawn" type="Button" parent="CanvasLayer/Control"]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+process_mode = 3
+layout_mode = 1
+offset_right = 143.0
+offset_bottom = 31.0
 text = "Kill yourself NOW"
 script = ExtResource("9_nbs70")
+
+[node name="PlayAgain" parent="CanvasLayer/Control" instance=ExtResource("10_qfe0g")]
+process_mode = 3
+visible = false
+layout_mode = 1
+script = ExtResource("11_dpmff")
+
+[node name="FinishFlag" type="Area2D" parent="."]
+position = Vector2(400, -96)
+script = ExtResource("10_g3363")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FinishFlag"]
+position = Vector2(1.5, -57.5)
+shape = SubResource("RectangleShape2D_0tkdt")
+
+[node name="Polygon2D" type="Polygon2D" parent="FinishFlag"]
+position = Vector2(0, -1)
+polygon = PackedVector2Array(-2, 1, -2, -115, 30, -105, 0, -100, 0, 1)
+
+[node name="Polygon2D2" type="Polygon2D" parent="FinishFlag"]
+position = Vector2(0, -1)
+color = Color(0.231373, 0.34902, 0.929412, 1)
+polygon = PackedVector2Array(3, -113, 3, -108, 0, -108, 0, -106, 3, -106, 3, -101, 4, -101, 4, -106, 30, -105, 4, -108, 4, -113)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="FinishFlag"]
+visible = false
+offset_left = -34.0
+offset_top = -154.0
+offset_right = 56.0
+offset_bottom = -131.0
+text = "YOU WIN!!!"
+fit_content = true
+
+[connection signal="pressed" from="CanvasLayer/Control/PlayAgain" to="CanvasLayer/Control/PlayAgain" method="_on_pressed"]
+[connection signal="body_entered" from="FinishFlag" to="FinishFlag" method="_on_body_entered"]

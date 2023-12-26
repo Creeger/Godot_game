@@ -1,5 +1,8 @@
 extends Node
 
+func _ready():
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 var last_position: Vector2 = Vector2() :
 	set(value):
 		last_position = value
@@ -12,4 +15,5 @@ var last_position: Vector2 = Vector2() :
 		return last_position
 
 func respawn():
+	get_tree().paused = false
 	get_tree().reload_current_scene()
