@@ -16,4 +16,4 @@ var last_position: Vector2 = Vector2() :
 
 func respawn():
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	get_tree().call_deferred("reload_current_scene")

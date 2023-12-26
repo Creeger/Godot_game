@@ -5,6 +5,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6s0nr"]
 
 [node name="Checkpoint" type="Area2D" groups=["Checkpoint"]]
+position = Vector2(0, 7)
 script = ExtResource("1_g27gi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

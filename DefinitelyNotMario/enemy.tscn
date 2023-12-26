@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://brrvjgfoxno0o"]
+
+[ext_resource type="Script" path="res://Enemy.gd" id="1_wyskx"]
+[ext_resource type="Texture2D" uid="uid://dvgcm1c35kowq" path="res://generic_platformer_tiles.png" id="2_1wggi"]
+[ext_resource type="Script" path="res://EnemyKillPlayer.gd" id="3_5gvt3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4waa7"]
+size = Vector2(7, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h08dg"]
+size = Vector2(17, 17)
+
+[node name="Enemy" type="CharacterBody2D"]
+script = ExtResource("1_wyskx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 8)
+shape = SubResource("RectangleShape2D_4waa7")
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_1wggi")
+region_enabled = true
+region_rect = Rect2(710, 559, 19, 17)
+metadata/_edit_lock_ = true
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2(9, 0)
+
+[node name="RayCast2D2" type="RayCast2D" parent="."]
+position = Vector2(-8, 0)
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("3_5gvt3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_h08dg")
