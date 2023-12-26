@@ -7,6 +7,7 @@ const JUMP_VELOCITY = -400.0
 var last_standing_position = Vector2(0, 0)
 @onready var ray_cast_2d_left = $RayCast2DLeft
 @onready var ray_cast_2d_right = $RayCast2DRight
+@onready var ray_cast_2d_down = $RayCast2DDown
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -15,6 +16,17 @@ func _ready():
 	global_position = CheckpointState.last_position
 
 func _physics_process(delta):
+	
+	var collider = ray_cast_2d_down.get_collider()
+	if collider is StaticBody2D:
+		var shape: CollisionShape2D = collider.get_child(0)
+		if Input.is_action_just_pressed("FallThroughGround"):
+			shape.disabled = true
+			var tween = get_tree().create_tween()
+			tween.tween_callback(
+				func(): shape.disabled = false
+			).set_delay(0.1)
+	
 	if is_on_floor():
 		last_standing_position = global_position
 	# Add the gravity.

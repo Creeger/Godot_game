@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://rx762t2nt76r"]
+[gd_scene load_steps=7 format=3 uid="uid://rx762t2nt76r"]
 
-[ext_resource type="PackedScene" uid="uid://cryt72s7wc4lm" path="res://tilemap.tscn" id="1_4snp5"]
+[ext_resource type="PackedScene" path="res://tilemap.tscn" id="1_4snp5"]
+[ext_resource type="Texture2D" uid="uid://ctn80amqf1ahi" path="res://icon.svg" id="3_la1pr"]
 [ext_resource type="Script" path="res://RespawnButton.gd" id="9_nbs70"]
 [ext_resource type="PackedScene" uid="uid://mxspgmphsu6w" path="res://play_again_button.tscn" id="10_qfe0g"]
 [ext_resource type="Script" path="res://play_again_button.gd" id="11_dpmff"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tiuu8"]
 
 [node name="Main" type="Node2D"]
 texture_filter = 1
@@ -38,5 +41,15 @@ process_mode = 3
 visible = false
 layout_mode = 1
 script = ExtResource("11_dpmff")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(122, -38)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_tiuu8")
+one_way_collision = true
+
+[node name="Icon" type="Sprite2D" parent="StaticBody2D"]
+texture = ExtResource("3_la1pr")
 
 [connection signal="pressed" from="CanvasLayer/Control/PlayAgain" to="CanvasLayer/Control/PlayAgain" method="_on_pressed"]
