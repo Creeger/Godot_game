@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://gwajo1vct5c8"]
+[gd_scene load_steps=34 format=3 uid="uid://gwajo1vct5c8"]
 
 [ext_resource type="Texture2D" uid="uid://b5a7vim45baig" path="res://Dungeon Crawl Stone Soup Full/dungeon/floor/grass/grass_0_new.png" id="1_qma8s"]
 [ext_resource type="Texture2D" uid="uid://dq1eqqjo7aqhb" path="res://Dungeon Crawl Stone Soup Full/dungeon/floor/grass/grass_1_new.png" id="2_26255"]
@@ -15,6 +15,9 @@
 [ext_resource type="Script" path="res://Player.gd" id="13_diexu"]
 [ext_resource type="Resource" uid="uid://d3f1spm15p626" path="res://Sword.tres" id="14_1m8u4"]
 [ext_resource type="Texture2D" uid="uid://dita3t8h07urv" path="res://Dungeon Crawl Stone Soup Full/player/base/deep_elf_male.png" id="14_5h3gn"]
+[ext_resource type="Texture2D" uid="uid://cu51x1lo826lr" path="res://Dungeon Crawl Stone Soup Full/item/weapon/katana_1.png" id="16_1uaj8"]
+[ext_resource type="Script" path="res://HitBox.gd" id="17_e58rm"]
+[ext_resource type="Script" path="res://HurtBox.gd" id="17_px7d3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cp7sy"]
 texture = ExtResource("1_qma8s")
@@ -75,8 +78,125 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="GDScript" id="GDScript_uqym8"]
+script/source = "extends AnimatedSprite2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	play(\"default\")
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+"
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fjw3k"]
 size = Vector2(22, 30)
+
+[sub_resource type="GDScript" id="GDScript_rj4es"]
+resource_name = "WeaponInHand"
+script/source = "extends Sprite2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	update_sprite()
+	
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+
+func update_sprite():
+	var weapon: Weapon = get_parent().weapon
+	if weapon == null:
+		texture = null
+	else:
+		texture = weapon.character_image
+
+func _on_player_changed_weapon():
+	update_sprite()
+	
+"
+
+[sub_resource type="GDScript" id="GDScript_3qysm"]
+resource_name = "ItemScanner"
+script/source = "extends Area2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	var items = get_overlapping_areas()
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hmy2a"]
+
+[sub_resource type="GDScript" id="GDScript_q71f5"]
+resource_name = "Grounditem.gd"
+script/source = "@tool
+extends Area2D
+@export var weapon : Weapon :
+	set(new_weapon):
+		weapon = new_weapon
+		changed_weapon.emit()
+
+
+signal changed_weapon 
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ma3kf"]
+size = Vector2(32, 32)
+
+[sub_resource type="GDScript" id="GDScript_g0yly"]
+resource_name = "GroundItemSprite"
+script/source = "@tool
+extends Sprite2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	update_sprite()
+	
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+
+
+
+func _on_ground_item_changed_weapon():
+	update_sprite()
+	
+
+func update_sprite():
+	var weapon = get_parent().weapon
+	if weapon == null:
+		texture = null
+	else:
+		texture = weapon.inventory
+	
+	
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cb5ct"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -88,13 +208,13 @@ layer_0/tile_data = PackedInt32Array(131071, 3, 0, 65536, 3, 0, 65537, 3, 0, 1, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(17, 16)
 sprite_frames = SubResource("SpriteFrames_ijwqv")
-frame_progress = 0.875851
+frame_progress = 0.906251
+script = SubResource("GDScript_uqym8")
 
 [node name="Player" type="CharacterBody2D" parent="."]
 position = Vector2(-17, 15)
 motion_mode = 1
 script = ExtResource("13_diexu")
-weapon = ExtResource("14_1m8u4")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
 texture = ExtResource("14_5h3gn")
@@ -106,3 +226,56 @@ shape = SubResource("RectangleShape2D_fjw3k")
 metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+
+[node name="WeaponInHand" type="Sprite2D" parent="Player"]
+script = SubResource("GDScript_rj4es")
+
+[node name="ItemScanner" type="Area2D" parent="Player"]
+scale = Vector2(1.00131, 1)
+collision_layer = 0
+collision_mask = 2
+script = SubResource("GDScript_3qysm")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Player/ItemScanner"]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_fjw3k")
+metadata/_edit_lock_ = true
+
+[node name="HurtBox" type="Area2D" parent="Player"]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("17_px7d3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/HurtBox"]
+shape = SubResource("RectangleShape2D_hmy2a")
+
+[node name="GroundItem" type="Area2D" parent="."]
+scale = Vector2(0.997177, 0.993877)
+collision_layer = 2
+collision_mask = 0
+script = SubResource("GDScript_q71f5")
+weapon = ExtResource("14_1m8u4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroundItem"]
+shape = SubResource("RectangleShape2D_ma3kf")
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="GroundItem"]
+texture = ExtResource("16_1uaj8")
+script = SubResource("GDScript_g0yly")
+
+[node name="HitBox" type="Area2D" parent="."]
+position = Vector2(17, 26)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("17_e58rm")
+weapon = ExtResource("14_1m8u4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+shape = SubResource("RectangleShape2D_cb5ct")
+
+[connection signal="changed_weapon" from="Player" to="Player/WeaponInHand" method="_on_player_changed_weapon"]
+[connection signal="area_entered" from="Player/ItemScanner" to="Player" method="_on_item_scanner_area_entered"]
+[connection signal="got_hit" from="Player/HurtBox" to="Player" method="_on_hurt_box_got_hit"]
+[connection signal="changed_weapon" from="GroundItem" to="GroundItem/Sprite2D" method="_on_ground_item_changed_weapon"]
+[connection signal="area_entered" from="HitBox" to="HitBox" method="_on_area_entered"]
